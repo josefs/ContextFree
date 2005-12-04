@@ -1,0 +1,28 @@
+-- A grammar is list of statements
+
+Grammar. Grammar ::= [Stmt] ;
+
+-- Statements are either rules or a startrule directive
+
+terminator Stmt "" ;
+
+Rule.  Stmt ::= "rule" Ident "{" [Call] "}" ;
+Start. Stmt ::= "startrule" Ident ;
+
+terminator Call "" ;
+
+Call. Call ::= Ident "{" [Spec] "}" ;
+
+terminator Spec "" ;
+
+-- Here I'd like to be able to specify that I want any prefix of "size"
+-- as the size specification. But maybe I can by creating a new token.
+
+Y. Spec ::= "y" Double ;
+X. Spec ::= "x" Double ;
+Size. Spec ::= "s" Double ;
+Rotate. Spec ::= "r" Double ;
+Bright. Spec ::= "b" Double ;
+
+comment "#";
+
