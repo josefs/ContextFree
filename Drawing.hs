@@ -9,13 +9,14 @@ data Drawing
     | Square
     | Transformation Transform Drawing
     | Branch [Drawing]
-
+      deriving Show
 data Transform 
     = Transform { dx      :: Double,
 		  dy      :: Double,
 		  dsize   :: Double,
 		  dbright :: Double,
 		  drotate :: Double }
+       deriving Show
 
 identityTransform = Transform { dx      = 0,
 				dy      = 0,
@@ -33,11 +34,12 @@ data BBox = BBox { x :: !Double
                  , y :: !Double
                  , w :: !Double
                  , h :: !Double }
+             deriving Show
 
 boundingBox :: Drawing -> BBox
 boundingBox (Transformation tr dr) = transformBBox tr (boundingBox dr)
 boundingBox (Branch ds) = foldr1 unionBBox (map boundingBox ds)
-boundingBox _ = BBox -0.5 -0.5 1 1
+boundingBox _ = BBox (-0.5) (-0.5) 1 1
 
 transformBBox :: Transform -> BBox -> BBox
 transformBBox (Transform dx dy ds _ dr) (BBox x y w h) 
