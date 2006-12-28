@@ -7,7 +7,7 @@ Grammar. Grammar ::= [Stmt] ;
 terminator Stmt "" ;
 
 Rule.  Stmt ::= "rule" Ident "{" [Call] "}" ;
-Start. Stmt ::= "startrule" Ident ;
+Start. Stmt ::= "startshape" Ident ;
 
 terminator Call "" ;
 
