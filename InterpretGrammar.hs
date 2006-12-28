@@ -1,3 +1,9 @@
+{- This module uses a monad to render a drawing from a grammar. That 
+seems somewhat suboptimal as the monad risk sequencing the the drawing 
+too much. Remember, the aim is to draw the picture in an iterative 
+deepening fashion and then we need to be able to cut off the evaluation 
+-}
+
 module InterpretGrammar where
 
 import TransformGrammar
