@@ -7,12 +7,14 @@ import qualified Data.Map as Map
 import Data.Array
 import Data.List
 import Data.Char
+import System.Random
 
 type Gr = Rule
 
 -- This type should perhaps be a little more abstract. Like this maybe:
 -- StdGen -> [Figure]
-type Rule = Array Int [Figure]
+-- type Rule = Array Int [Figure]
+type Rule = StdGen -> [Figure]
 
 data Figure = Rule Rule D.Transform
 	    | Circle D.Transform
@@ -25,9 +27,9 @@ transformGrammar (G.Grammar grammar)
                           start ruleNameMap
   where (G.Start (G.Ident start)
 	 : sortedGrammar) = sortBy ruleName grammar
-	partitionedGrammar = map mkRule $ groupBy eqRuleName sortedGrammar
+	partitionedGrammar = map mkRuleTpl $ groupBy eqRuleName sortedGrammar
 
-	mkRule rules@(G.Rule (G.Ident name) _ : _) 
+	mkRuleTpl rules@(G.Rule (G.Ident name) w _ : _) 
 	    = (map toLower name
 	      ,map stripRuleConstructor rules)
 	stripRuleConstructor (G.Rule _ w calls) = (w,calls)
@@ -36,11 +38,19 @@ transformGrammar (G.Grammar grammar)
 	-- Maps a rule name to the possible choices in the rule.
 	-- It is recursively defined to that we get sharing in the grammar
 	ruleNameMap = Map.fromList $
-		      map mkArray $
+		      map mkRule $
 		      map (translateCalls ruleNameMap) $
 		      partitionedGrammar
-	mkArray (name,choices) = (name
-				 ,listArray (0,length choices - 1) choices)
+	mkRule (name,choices) = (name
+			        ,ruleFunction)
+          where weights = map fst choices
+                increasingWeights = scanl1 (+) weights
+                choiceList = zip increasingWeights (map snd choices)
+                totalWeight = sum weights
+                ruleFunction rnd = go choiceList
+                  where go ((w,c):cs) | r < w = c
+                                      | otherwise = go cs
+                        (r,_) = randomR (0,totalWeight) rnd
 
 translateCalls nameMap (name,calls) 
   = (name, map (\ (w,c) -> (w,map (translateCall nameMap) c)) calls)
