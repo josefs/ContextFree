@@ -43,7 +43,9 @@ transformGrammar (G.Grammar grammar)
 		      partitionedGrammar
 	mkRule (name,choices) = (name
 			        ,ruleFunction)
-          where weights = map fst choices
+          where weights = map (toDouble . fst) choices
+                toDouble (G.NoW) = 1
+                toDouble (G.A_W d) = d
                 increasingWeights = scanl1 (+) weights
                 choiceList = zip increasingWeights (map snd choices)
                 totalWeight = sum weights

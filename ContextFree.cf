@@ -6,8 +6,11 @@ Grammar. Grammar ::= [Stmt] ;
 
 terminator Stmt "" ;
 
-Rule.  Stmt ::= "rule" Ident Double "{" [Call] "}" ;
+Rule.  Stmt ::= "rule" Ident Weight "{" [Call] "}" ;
 Start. Stmt ::= "startshape" Ident ;
+
+NoW. Weight ::= ;
+A_W. Weight ::= Double ;
 
 terminator Call "" ;
 
