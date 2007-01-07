@@ -30,7 +30,7 @@ transformGrammar (G.Grammar grammar)
 	mkRule rules@(G.Rule (G.Ident name) _ : _) 
 	    = (map toLower name
 	      ,map stripRuleConstructor rules)
-	stripRuleConstructor (G.Rule _ calls) = calls
+	stripRuleConstructor (G.Rule _ w calls) = (w,calls)
 	stripRuleConstructor _ 
 	    = error "Odd constructor in TransformGrammar.stripRuleConstructor"
 	-- Maps a rule name to the possible choices in the rule.
@@ -42,8 +42,8 @@ transformGrammar (G.Grammar grammar)
 	mkArray (name,choices) = (name
 				 ,listArray (0,length choices - 1) choices)
 
-translateCalls nameMap (name,calls) = (name
-				      ,map (map (translateCall nameMap)) calls)
+translateCalls nameMap (name,calls) 
+  = (name, map (\ (w,c) -> (w,map (translateCall nameMap) c)) calls)
 translateCall nameMap (G.Call (G.Ident ruleName) specs)
     = case map toLower ruleName of
        "circle" -> Circle trans
@@ -64,7 +64,7 @@ updateTransformField (G.Bright b) trans = trans { D.dbright = b }
 
 ruleName (G.Start _) _ = LT
 ruleName _ (G.Start _) = GT
-ruleName (G.Rule n1 _) (G.Rule n2 _) = compare n1 n2
+ruleName (G.Rule n1 _ _) (G.Rule n2 _ _) = compare n1 n2
 
-eqRuleName (G.Rule n1 _) (G.Rule n2 _) = n1 == n2
+eqRuleName (G.Rule n1 _ _) (G.Rule n2 _ _) = n1 == n2
 eqRuleName _ _ = error "Not a rule in TransformGrammar.eqRuleName"
