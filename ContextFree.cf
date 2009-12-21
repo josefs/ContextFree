@@ -10,7 +10,7 @@ Rule.  Stmt ::= "rule" Ident Weight "{" [Call] "}" ;
 Start. Stmt ::= "startshape" Ident ;
 
 NoW. Weight ::= ;
-A_W. Weight ::= Double ;
+A_W. Weight ::= Number ;
 
 terminator Call "" ;
 
@@ -21,11 +21,13 @@ terminator Spec "" ;
 -- Here I'd like to be able to specify that I want any prefix of "size"
 -- as the size specification. But maybe I can by creating a new token.
 
-Y. Spec ::= "y" Double ;
-X. Spec ::= "x" Double ;
-Size. Spec ::= "s" Double ;
-Rotate. Spec ::= "r" Double ;
-Bright. Spec ::= "b" Double ;
+Y. Spec ::= "y" Number ;
+X. Spec ::= "x" Number ;
+Size. Spec ::= SizeTok Number ;
+Rotate. Spec ::= "r" Number ;
+Bright. Spec ::= "b" Number ;
 
 comment "#";
 
+token Number ('-'? digit+ ('.' digit+)?);
+token SizeTok ('s' ('i' ('z' ('e')?)?)?);
